@@ -8,15 +8,29 @@ public class pc : MonoBehaviour
     private bool isVisible = false;
     public Text speechText;
     public AudioSource soundSource;
+    public AudioSource keyboardSource;
 
     private void OnMouseDown()
     {
         speechText.text = "Wenn ich nicht im Bett bin, dann wahrscheinlich am PC.";
         isVisible = true;
         speechBubble.SetActive(isVisible);
-        soundSource.Play();
+
+        // Starte Coroutine, um Sounds nacheinander abzuspielen
+        StartCoroutine(PlaySoundsSequentially());
+
         Debug.Log("Gedrückt");
         StartCoroutine(HideAfterSeconds(5f));
+    }
+
+    private IEnumerator PlaySoundsSequentially()
+    {
+        soundSource.Play();
+
+        // Warte, bis soundSource fertig ist
+        yield return new WaitWhile(() => soundSource.isPlaying);
+
+        keyboardSource.Play();
     }
 
 

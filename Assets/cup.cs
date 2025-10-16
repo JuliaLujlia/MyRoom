@@ -8,16 +8,30 @@ public class cup : MonoBehaviour
     private bool isVisible = false;
     public Text speechText;
     public AudioSource soundSource;
+    public AudioSource drinkingSound;
 
     private void OnMouseDown()
     {
         speechText.text = "Die Tage werden wieder kälter, zum Glück habe ich meinen Tee.";
         isVisible = true;
         speechBubble.SetActive(isVisible);
-        soundSource.Play();
+        // Starte Coroutine, um Sounds nacheinander abzuspielen
+        StartCoroutine(PlaySoundsSequentially());
+
         Debug.Log("Gedrückt");
         StartCoroutine(HideAfterSeconds(5f));
     }
+
+    private IEnumerator PlaySoundsSequentially()
+    {
+        soundSource.Play();
+
+        // Warte, bis soundSource fertig ist
+        yield return new WaitWhile(() => soundSource.isPlaying);
+
+        drinkingSound.Play();
+    }
+
 
 
     private IEnumerator HideAfterSeconds(float delay)
